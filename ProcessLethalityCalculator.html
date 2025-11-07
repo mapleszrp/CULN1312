@@ -207,7 +207,16 @@
                     // Store data for the graph
                     cumulativeLogReductions.push(cumulativeLog.toFixed(2));
                     targetLogData.push(target_log);
-                    timeLabels.push(`${((index + 1) * interval_sec) / 60.0} min`); // Changed to minutes
+                    // Calculate time in minutes and format appropriately
+                    const totalSeconds = (index + 1) * interval_sec;
+                    if (totalSeconds < 60) {
+                        // Show seconds for times under 1 minute
+                        timeLabels.push(`${totalSeconds}s`);
+                    } else {
+                        // Show minutes with 1 decimal place for longer times
+                        const timeInMinutes = totalSeconds / 60.0;
+                        timeLabels.push(`${timeInMinutes.toFixed(1)} min`);
+                    }
                 });
 
                 const log_reductions = cumulativeLog;
@@ -342,4 +351,5 @@
         });
     </script>
 </body>
+
 </html>
