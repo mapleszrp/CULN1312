@@ -274,27 +274,29 @@
                     data: {
                         labels: timeLabels,
                         datasets: [
-                            {
-                                label: 'Actual Log Reductions',
-                                data: cumulativeLogReductions,
-                                borderColor: isSafe ? 'rgb(22, 163, 74)' : 'rgb(220, 38, 38)',
-                                backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                fill: false,
-                                tension: 0.1,
-                                pointRadius: 0
-                            },
-                            {
-                                label: 'Target Log Reductions',
-                                data: targetLogData,
-                                borderColor: 'rgb(59, 130, 246)',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                backgroundColor: 'transparent',
-                                fill: false,
-                                pointRadius: 0
-                            }
-                        ]
+                        {
+                            label: 'Actual Log Reductions',
+                            data: cumulativeLogReductions,
+                            borderColor: isSafe ? 'rgb(22, 163, 74)' : 'rgb(220, 38, 38)',
+                            backgroundColor: isSafe ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+                            borderWidth: 3,
+                            fill: true, // Keep the area fill
+                            tension: 0.1,
+                            pointRadius: 0,
+                            // Add this to make legend show line instead of box:
+                            legendColor: isSafe ? 'rgb(22, 163, 74)' : 'rgb(220, 38, 38)'
+                        },
+                        {
+                            label: 'Target Log Reductions',
+                            data: targetLogData,
+                            borderColor: 'rgb(59, 130, 246)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            backgroundColor: 'transparent', // No fill for target line
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
                     },
                     options: {
                         responsive: true,
@@ -304,17 +306,16 @@
                                 beginAtZero: true,
                                 title: {
                                     display: true,
-                                    // --- FIX: Updated Y-Axis Title ---
                                     text: 'Cumulative Log Reductions'
                                 }
                             },
                             x: {
                                 title: {
                                     display: true,
-                                    text: `Time (in minutes)` // Changed label
+                                    text: `Time (in minutes)`
                                 },
                                 ticks: {
-                                    maxTicksLimit: 20 // Prevents overcrowding on x-axis
+                                    maxTicksLimit: 20
                                 }
                             }
                         },
@@ -324,6 +325,26 @@
                                 text: 'Process Lethality Over Time',
                                 font: {
                                     size: 18
+                                }
+                            },
+                            // Add this custom legend plugin:
+                            legend: {
+                                labels: {
+                                    usePointStyle: true, // This makes the legend use lines instead of boxes
+                                    generateLabels: function(chart) {
+                                        const original = Chart.defaults.plugins.legend.labels.generateLabels;
+                                        const labels = original.call(this, chart);
+                                        
+                                        // Customize the first dataset to show as line
+                                        labels[0].pointStyle = 'line';
+                                        labels[0].fillStyle = 'transparent'; // Remove fill in legend
+                                        
+                                        // Ensure second dataset shows as dashed line
+                                        labels[1].pointStyle = 'line'; 
+                                        labels[1].fillStyle = 'transparent';
+                                        
+                                        return labels;
+                                    }
                                 }
                             }
                         }
@@ -349,4 +370,5 @@
 </body>
 
 </html>
+
 
