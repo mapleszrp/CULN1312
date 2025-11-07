@@ -207,16 +207,10 @@
                     // Store data for the graph
                     cumulativeLogReductions.push(cumulativeLog.toFixed(2));
                     targetLogData.push(target_log);
-                    // Calculate time in minutes and format appropriately
-                    const totalSeconds = (index + 1) * interval_sec;
-                    if (totalSeconds < 60) {
-                        // Show seconds for times under 1 minute
-                        timeLabels.push(`${totalSeconds}s`);
-                    } else {
-                        // Show minutes with 1 decimal place for longer times
-                        const timeInMinutes = totalSeconds / 60.0;
-                        timeLabels.push(`${timeInMinutes.toFixed(1)} min`);
-                    }
+                    // Calculate time in minutes and format to avoid long decimals
+                    const timeInMinutes = ((index + 1) * interval_sec) / 60.0;
+                    // Round to 2 decimal places for cleaner display, but keep enough precision for calculations
+                    timeLabels.push(`${timeInMinutes.toFixed(2)} min`);
                 });
 
                 const log_reductions = cumulativeLog;
@@ -284,17 +278,19 @@
                                 label: 'Actual Log Reductions',
                                 data: cumulativeLogReductions,
                                 borderColor: isSafe ? 'rgb(22, 163, 74)' : 'rgb(220, 38, 38)',
-                                backgroundColor: isSafe ? 'rgba(22, 163, 74, 0.1)' : 'rgba(220, 38, 38, 0.1)',
-                                fill: true,
-                                tension: 0.1
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                fill: false,
+                                tension: 0.1,
+                                pointRadius: 0
                             },
                             {
                                 label: 'Target Log Reductions',
                                 data: targetLogData,
                                 borderColor: 'rgb(59, 130, 246)',
-                                // --- FIX: Removed background color to make legend a line ---
-                                // backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                                borderWidth: 2,
                                 borderDash: [5, 5],
+                                backgroundColor: 'transparent',
                                 fill: false,
                                 pointRadius: 0
                             }
@@ -353,3 +349,4 @@
 </body>
 
 </html>
+
